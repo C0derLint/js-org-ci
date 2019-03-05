@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/C0derLint/js-org-ci/issues"
   },
-  "homepage": "https://github.com/C0derLint/js-org-ci#readme"
+  "homepage": "https://github.com/C0derLint/js-org-ci#readme",
+  "devDependencies": {
+    "danger": "^7.0.14"
+  }
 }
