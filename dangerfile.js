@@ -9,16 +9,16 @@ const prTitle = danger.github.pr.title;
 const isActiveFileModified = () => {
   return new Promise((resolve, reject) => {
     // Check number of modified files and if the right file is modified
-    if(modified.includes(activeFile))
-      if(modified.length == 1) {
+    if(modified.includes(activeFile)) {
+      if(modified.length == 1)
         message(`:white_check_mark: Only file modified is ${activeFile}`)
-        resolve();
-      }
       else
         warn(`Multiple files modified - ${modified.join(", ")}`)
-    else 
+      resolve();
+    } else {
       fail(`${activeFile} not modified.`)
-    reject();
+      reject();
+    }
   })
 }
 
@@ -31,17 +31,17 @@ const checkDiff = async () => {
 }
 
 //const checkPrTitle = async () => {
-  let titleMatch = /([\d\w]+?)\.js\.org/.exec(prTitle)
-  if(titleMatch != null) {
-    message(`Title of PR: ${prTitle}`)
-  //  resolve(titleMatch[1]);
-  }
-  else
-    warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`)
+//  resolve(titleMatch[1]);
 //}
 
+let titleMatch = /([\d\w]+?)\.js\.org/.exec(prTitle)
+if(titleMatch != null)
+  message(`Title of PR: ${prTitle}`)
+else
+  warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`)
 
 isActiveFileModified()
-  .then(() => checkDiff());
+  .then(() => checkDiff())
+  .catch(() => console.log(`${activeFile} isn't even modified!`));
 
 // JSON.parse()
