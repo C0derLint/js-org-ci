@@ -27,6 +27,16 @@ const prTitle = danger.github.pr.title;
 
 // JSON.parse()
 
+// puts the line into a JSON object, tries to parse and returns a JS object or undefined
+function checkJSON(line) {
+  try {
+    let re = JSON.parse(`{"_":"" ${line}}`);
+    delete re._;
+    return re;
+  } catch (e) {}
+}
+
+
 const result = async () => {
   
   // Check if cnames_active.js is modified.
@@ -43,9 +53,8 @@ const result = async () => {
 
   // Check if PR title matches *.js.org
   let prTitleMatch = /([\d\w]+?)\.js\.org/.exec(prTitle)
-  let isPRTitleCorrect = prTitleMatch !== null
 
-  if(isPRTitleCorrect)
+  if(prTitleMatch)
     message(`:heavy_check_mark: Title of PR - ${prTitle}`)
   else
     warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`)
@@ -59,30 +68,39 @@ const result = async () => {
   else
     fail(`More than one line added! There's no need to write essays here ;)`)
 
+  console.log(linesOfCode);
 
   // Check diff to see if code is added properly
   let diff = await danger.git.diffForFile(activeFile);
-  let addedCode = diff.added;
+  let lineAdded = diff.substr(1);
 
-  // Do not allow comments
-  if(addedCode.match(/\/\//))
+  // Check for comments
+  let lineComment = /\/\/.*/g.exec(lineAdded);
+  if(lineComment) {
     warn("Please avoid comments in the cname file.")
 
-  
-  // Check if record matches acceptable regex
-  let addedRecordMatch = /^\+\s*?,\s*?"([\d\w]+?)":\s*?"([\S]+?)"\s*?$/.exec(addedCode);
-  let isAddedRecordCorrect = addedRecordMatch !== null;
+    // Remove the comment from the line in preparation for JSON parsing
+    lineAdded = lineAdded.substr(0, lineComment.index);
 
-  if(isAddedRecordCorrect) {
-    let recordKey = addedRecordMatch[1];
-    let recordValue = addedRecordMatch[2];
+    // Do not allow noCF comments
+    if(!(lineComment[0].match(/\s*\/\/\s*noCF\s*\n/g)))
+      fail("The `noCF` comment is no longer required, please remove the same.");
+  }
+
+  const recordAdded = checkJSON(lineAdded);
+  if(!(typeof recordAdded === "object"))
+    fail(`Could not parse ${lineAdded}`);
+  else {
+    // get the key of the record
+    const recordKey = Object.keys(recordAdded)[0];
+    // get the value of the record
+    const recordValue = recordAdded[recordKey];
 
     // Check if recordKey matches PR title
-    if(isPRTitleCorrect && prTitleMatch[1] != recordKey)
+    if(prTitleMatch[1] != recordKey)
       warn("Hmmm.. your PR title doesn't seem to match your entry in the file.")
 
-    // Check if record matches EXACT regex
-    if(!addedCode.match(/^\+\s{2},"[\d\w]+?":\s"[\S]+?"$/))
+    if(!diff.added.match(/^\+\s{2},"[\d\w]+?":\s"[\S]+?"$/))
       warn("Not an *exact* regex match")
   }
 }
