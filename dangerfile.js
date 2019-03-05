@@ -70,7 +70,7 @@ const result = async () => {
 
   // Check diff to see if code is added properly
   let diff = await danger.git.diffForFile(activeFile);
-  let lineAdded = diff.substr(1);
+  let lineAdded = diff.added.substr(1);
 
   // Check for comments
   let lineComment = /\/\/.*/g.exec(lineAdded);
