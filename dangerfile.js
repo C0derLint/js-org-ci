@@ -6,27 +6,6 @@ const modified = danger.git.modified_files;
 const newFiles = danger.git.created_files;
 const prTitle = danger.github.pr.title;
 
-// const checkIfActiveFileModified = () => {
-  
-// }
-
-// const checkDiff = async () => {
-//   let diff = await danger.git.diffForFile(activeFile);
-//   let linesOfCode = await danger.git.linesOfCode();
-
-//   if(diff.added.match(/^\+\s*?,"[\d\w]+?":\s*?".+?"$/) && linesOfCode == 1) {
-//     message(`:heavy_check_mark: Only one line added!`)    
-//   } else
-//     warn(`Regex failed for \`${diff.added}\``)
-// }
-
-
-// isActiveFileModified()
-//   .then(() => checkDiff())
-//   .catch(err => console.log(err));
-
-// JSON.parse()
-
 // puts the line into a JSON object, tries to parse and returns a JS object or undefined
 function checkJSON(line) {
   try {
@@ -36,6 +15,22 @@ function checkJSON(line) {
   } catch (e) {}
 }
 
+// test wheather a redirect is in place and the target is correct
+async function checkCNAME(domain, target) {
+  const {
+    headers,
+    statusCode
+  } = await getAsync(target);
+
+  if(!(statusCode >= 300 && statusCode < 400))
+    warn(`${target} has to redirect using a CNAME file`);
+  
+
+  const targetLocation = String(headers.location).replace(/^https/, "http").replace(/\/$/,'');
+  if(!(targetLocation === domain))
+    warn(`${target} is redirecting to ${targetLocation} instead of ${domain}`);
+  
+}
 
 const result = async () => {
   
@@ -100,9 +95,25 @@ const result = async () => {
     if(prTitleMatch[1] != recordKey)
       warn("Hmmm.. your PR title doesn't seem to match your entry in the file.")
 
+    // Check formatting (copy&paste from a browser adressbar often results in an URL)
+    if(!(!recordValue.match(/(http(s?))\:\/\//gi) && !recordValue.endsWith("/")))
+      fail("The target value should not start with 'http(s)://' and should not end with a '/'");
+
+    
     if(!diff.added.match(/^\+\s{2},"[\d\w]+?":\s"[\S]+?"$/))
       warn("Not an *exact* regex match")
+
+    // check if the target of of the record is a GitHub Page
+    if (recordValue.match(/.github\.io/g)) {
+      // check the presence of a CNAME
+      await checkCNAME(`http://${recordKey}.js.org`, `https://${recordValue}`);
+    }
   }
 }
 
-result().catch(() => console.log("Well .. humbug"));
+// Exit in case of any error
+result.catch(err => {
+  console.error(`ERROR: ${err.message || err}`);
+  console.info("Some CI tests have returned an error.");
+  process.exit(1);
+});
