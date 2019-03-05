@@ -23,7 +23,7 @@ const isActiveFileModified = () => {
 }
 
 const checkDiff = async () => {
-  let diff = JSON.parse(await danger.git.diffForFile(activeFile));
+  let diff = await danger.git.diffForFile(activeFile);
   if(diff.added.match(/^\+\s{2},"[\d\w]+?":\s".+?"$/))
     message(`:white_check_mark: Kudos, you've correctly added you domain addition.`)
   else
