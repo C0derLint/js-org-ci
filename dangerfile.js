@@ -30,13 +30,18 @@ const checkDiff = async () => {
     message(`Regex failed for \`${diff.added}\``)
 }
 
-// Check title of PR
-if(prTitle.match(/[\d\w]+?\.js\.org/))
-  message(`Title of PR: ${prTitle}`)
-else
-  warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`)
+//const checkPrTitle = async () => {
+  let titleMatch = /([\d\w]+?)\.js\.org/.exec(prTitle)
+  if(titleMatch != null) {
+    message(`Title of PR: ${prTitle}`)
+  //  resolve(titleMatch[1]);
+  }
+  else
+    warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`)
+//}
+
 
 isActiveFileModified()
-  .checkDiff();
+  .then(() => checkDiff());
 
 // JSON.parse()
