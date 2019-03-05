@@ -23,11 +23,11 @@ else
   fail(`${activeFile} not modified.`)
 
 danger.git.diffForFile(activeFile).then( data => {
-  console.log(`Diff: ${data}`);
+  console.log(`Diff: ${JSON.stringify(data)}`);
 })
 
 danger.git.structuredDiffForFile(activeFile).then( data => {
-  console.log(`Structured Diff: ${data}`);
+  console.log(`Structured Diff: ${JSON.stringify(data)}`);
 })
 
 
