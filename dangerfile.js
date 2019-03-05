@@ -1,5 +1,8 @@
 import {message, danger, fail} from "danger"
 
+const {get} = require("https");
+const getAsync = url => new Promise(resolve => get(url, resolve));
+
 const activeFile = "cnames_active.js";
 
 const modified = danger.git.modified_files;
