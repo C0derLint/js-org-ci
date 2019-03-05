@@ -6,9 +6,10 @@ const modified = danger.git.modified_files;
 const newFiles = danger.git.created_files;
 const prTitle = danger.github.pr.title;
 
-danger.git.JSONDiffForFile(activeFile).then( data => {
-  console.log(data);
-});
+// const getDiffs = async() => {
+//   return await danger.git.JSONDiffForFile(activeFile);
+// }
+
 
 // Check title of PR
 if(prTitle.match(/[\d\w]+?\.js\.org/))
@@ -25,7 +26,7 @@ if(modified.includes(activeFile))
 else 
   fail(`${activeFile} not modified.`)
 
-
+// console.log(getDiffs);
 
 
 // JSON.parse()
