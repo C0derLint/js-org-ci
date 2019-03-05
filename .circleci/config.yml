@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - danger
+      - run:
+          name: Install Dependencies
+          command: yarn add danger@7.0.14
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: danger
+          paths:
+            - ~/.cache/yarn
+      - run: 
+          name: Run Danger
+          command: yarn danger ci -tv
