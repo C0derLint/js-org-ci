@@ -115,7 +115,7 @@ const result = async () => {
 }
 
 // Exit in case of any error
-result.catch(err => {
+result().catch(err => {
   console.error(`ERROR: ${err.message || err}`);
   console.info("Some CI tests have returned an error.");
   process.exit(1);
