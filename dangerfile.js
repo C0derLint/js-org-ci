@@ -95,9 +95,9 @@ const result = async () => {
     const recordKey = Object.keys(recordAdded)[0];
     // get the value of the record
     const recordValue = recordAdded[recordKey];
-
+    console.log("Till")
     // Check if recordKey matches PR title
-    if(prTitleMatch[1] != recordKey)
+    if(prTitleMatch && prTitleMatch[1] != recordKey)
       warn("Hmmm.. your PR title doesn't seem to match your entry in the file.")
 
     // Check formatting (copy&paste from a browser adressbar often results in an URL)
