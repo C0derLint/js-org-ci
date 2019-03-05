@@ -52,6 +52,7 @@ var cnames_active = {
   ,"76": "hustcc.github.io/76"
   ,"766": "766.github.io"
   ,"7anshuai": "7anshuai.github.io" // noCF? (don't add this in a new PR)
+  ,"checkhello": "hey you working?"
   ,"98": "1j01.github.io/98"
   ,"abdalla": "the94air.github.io/abdalla"
   ,"abhishek": "rpidanny.github.io/personal-collage"
