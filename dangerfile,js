@@ -1,4 +1,16 @@
 import {message, danger} from "danger"
 
+const modified = danger.git.modified_files
+const newFiles = danger.git.created_files
+
+const isTrivial = contains(danger.github.pr.title, "#trivial")
+
 const modifiedMD = danger.git.modified_files.join("- ")
 message("Changed Files in this PR: \n - " + modifiedMD)
+
+const hasChangelog = includes(danger.git.modified_files, "changelog.md")
+
+
+if (!hasChangelog && !isTrivial) {
+  warn("Please add a changelog entry for your changes.")
+}
