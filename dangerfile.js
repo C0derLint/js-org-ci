@@ -1,12 +1,12 @@
 import {message, danger, fail} from "danger"
 
-const activeFile = "cnames_active.js"
+const activeFile = "cnames_active.js";
 
-const modified = danger.git.modified_files
-const newFiles = danger.git.created_files
-const prTitle = danger.github.pr.title
+const modified = danger.git.modified_files;
+const newFiles = danger.git.created_files;
+const prTitle = danger.github.pr.title;
 
-JSONDiffForFile(activeFile).then( data => {
+danger.git.JSONDiffForFile(activeFile).then( data => {
   console.log(data);
 });
 
