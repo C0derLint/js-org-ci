@@ -22,8 +22,12 @@ if(modified.includes(activeFile))
 else 
   fail(`${activeFile} not modified.`)
 
-danger.git.JSONDiffForFile(activeFile).then( data => {
-  console.log(data);
+danger.git.diffForFile(activeFile).then( data => {
+  console.log(`Diff: ${data}`);
+})
+
+danger.git.structuredDiffForFile(activeFile).then( data => {
+  console.log(`Structured Diff: ${data}`);
 })
 
 
