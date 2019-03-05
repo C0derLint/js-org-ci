@@ -85,6 +85,8 @@ const result = async () => {
       fail("The `noCF` comment is no longer required, please remove the same.");
   }
 
+  console.log("Everything works till here", lineAdded);
+
   const recordAdded = checkJSON(lineAdded);
   if(!(typeof recordAdded === "object"))
     fail(`Could not parse ${lineAdded}`);
