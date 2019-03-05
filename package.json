@@ -1,0 +1,19 @@
+{
+  "name": "js-org-ci",
+  "version": "1.0.0",
+  "description": "Testing",
+  "main": ".travis.js",
+  "scripts": {
+    "test": "yarn danger ci"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/C0derLint/js-org-ci.git"
+  },
+  "author": "Me",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/C0derLint/js-org-ci/issues"
+  },
+  "homepage": "https://github.com/C0derLint/js-org-ci#readme"
+}
