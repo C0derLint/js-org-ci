@@ -49,6 +49,7 @@ var cnames_active = {
   ,"23chemistrycamp": "nchuchemistry.github.io/23chemistrycamp"
   ,"2tube": "you2php.github.io/you2php"
   ,"404": "licshee.github.io/404"
+  ,"405": "random.website.org"
   ,"76": "hustcc.github.io/76"
   ,"766": "766.github.io"
   ,"awesome": "awesome.org"
