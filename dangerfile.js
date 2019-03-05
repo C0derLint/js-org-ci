@@ -57,7 +57,34 @@ const result = async () => {
   if(linesOfCode == 1)
     message(`:heavy_check_mark: Only one line added!`)    
   else
-    warn(`More than one line added! There's no need to write essays here ;)`)
+    fail(`More than one line added! There's no need to write essays here ;)`)
+
+
+  // Check diff to see if code is added properly
+  let diff = await danger.git.diffForFile(activeFile);
+  let addedCode = diff.added;
+
+  // Do not allow comments
+  if(addedCode.match(/\/\//))
+    warn("Please avoid comments in the cname file.")
+
+  
+  // Check if record matches acceptable regex
+  let addedRecordMatch = /^\+\s*?,\s*?"([\d\w]+?)":\s*?"([\S]+?)"\s*?$/.exec(addedCode);
+  let isAddedRecordCorrect = addedRecordMatch !== null;
+
+  if(isAddedRecordCorrect) {
+    let recordKey = addedRecordMatch[1];
+    let recordValue = addedRecordMatch[2];
+
+    // Check if recordKey matches PR title
+    if(isPRTitleCorrect && prTitleMatch[1] != recordKey)
+      warn("Hmmm.. your PR title doesn't seem to match your entry in the file.")
+
+    // Check if record matches EXACT regex
+    if(!addedCode.match(/^\+\s{2},"[\d\w]+?":\s"[\S]+?"$/))
+      warn("Not an *exact* regex match")
+  }
 }
 
 result().catch(() => console.log("Well .. humbug"));
