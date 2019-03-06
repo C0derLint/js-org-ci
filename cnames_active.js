@@ -63,7 +63,6 @@ var cnames_active = {
   ,"acegroup": "mohamed0group.github.io/acegroup"
   ,"acho": "achojs.github.io/acho"
   ,"acme": "makepost.github.io/acme-commander"
-  ,"www": "7anshuai.github.io" // noCF? (don't add this in a new PR)
   ,"action-u": "kevinast.github.io/action-u"
   ,"active-resource": "nicklandgrebe.github.io/activeresource.js"
   ,"ada": "ada-js.netlify.com"
@@ -1513,6 +1512,7 @@ var cnames_active = {
   ,"wordywordy": "sverweij.github.io/wordywordy"
   ,"writebar": "alexander-shvets.github.io/writebar"
   ,"wthunting": "sawyerbx.github.io/wthunting"
+  ,"www": "7anshuai.github.io"
   ,"wyfe": "wangyuanstudio.github.io/WYFE" // noCF? (don't add this in a new PR)
   ,"wynncraft": "frawolf.github.io/wynncraft.js"
   ,"xn--w4h": "zzyzxlab.github.io/tao.js"
