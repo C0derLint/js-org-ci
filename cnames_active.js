@@ -57,7 +57,7 @@ var cnames_active = {
   ,"abhishek": "rpidanny.github.io/personal-collage"
   ,"abhishekmittal": "abhishek-mittal.github.io/abhishekmittal"
   ,"abialbon": "abialbon.github.io"
-  ,"acarsy": "acarsy.github.io"
+  ,"acyrsy": "acyrsy.github.io"
   ,"accordion": "awps.github.io/Accordion.JS"
   ,"acebooks": "mohamed0group.github.io/acebooks"
   ,"acegroup": "mohamed0group.github.io/acegroup"
