@@ -245,3 +245,5 @@ var cnames_restricted = [
   "www(1/2/3/42)",
   "xml"
 ]
+
+module.exports = cnames_restricted

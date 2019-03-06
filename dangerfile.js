@@ -4,6 +4,7 @@ const {get} = require("https");
 const getAsync = url => new Promise(resolve => get(url, resolve));
 
 const activeFile = "cnames_active.js";
+const restrictedFile = "cnames_restricted.js"
 
 const modified = danger.git.modified_files;
 const prTitle = danger.github.pr.title;
@@ -37,6 +38,23 @@ async function checkCNAME(domain, target) {
   else if(targetLocation !== domain)
     warn(`\`${target}\` is redirecting to \`${targetLocation}\` instead of \`${domain}\``);
 }
+
+
+// Read restricted CNames from file
+function getRestrictedCNames() {
+  let restrictedCNames = []
+
+  require(restrictedFile).forEach(CName => {
+    let end = /\(([\d\w/]*?)\)/.exec(CName)
+    let base =  end ? CName.substr(0, end.index) : CName
+    let CNames = new Set([base])
+    if(end) end[1].split("/").forEach(addon =>  CNames.add(base + addon))
+    restrictedCNames.push(...CNames);
+  });
+
+  return restrictedCNames;
+}
+
 
 const result = async () => {
   
@@ -141,6 +159,9 @@ const result = async () => {
         }
       })
     }); 
+
+    if(getRestrictedCNames().includes(recordKey))
+      fail(`You are using a restricted name. Refer ${restrictedFile} for more info.`)
   }
   markdown(`@${danger.github.pr.user.login} Hey, thanks for opening this PR! \
             <br>I've taken the liberty of running a few tests, you can see the results above :)`);
