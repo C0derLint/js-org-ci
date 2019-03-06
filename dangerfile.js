@@ -44,7 +44,7 @@ async function checkCNAME(domain, target) {
 function getRestrictedCNames() {
   let restrictedCNames = []
 
-  require(restrictedFile).forEach(CName => {
+  require(`./${restrictedFile}`).forEach(CName => {
     let end = /\(([\d\w/]*?)\)/.exec(CName)
     let base =  end ? CName.substr(0, end.index) : CName
     let CNames = new Set([base])
@@ -146,11 +146,11 @@ const result = async () => {
         let lineMatch = /"(.+?)"\s*?:/.exec(lineObj.content); // get subdomain part
         if(lineMatch) return lineMatch[1]; // and return if found
       }).filter( Boolean ); // Remove false values like undefined, null
-      
+
       diffLines.some((line, i) => {
         if (i) { // skip the first element
           let compareStrings = line.localeCompare(diffLines[i - 1]); // Compare strings
-          if(compareStrings > 0) { // If > 0, it is in alphabetical order
+          if(compareStrings < 0) { // Check if it is in alphabetical order
             fail("The list is no longer in alphabetic order.");
             return true;
           } else if(compareStrings == 0) { // check if duplicate
@@ -160,6 +160,7 @@ const result = async () => {
       })
     }); 
 
+    // Check if using a restricted CName
     if(getRestrictedCNames().includes(recordKey))
       fail(`You are using a restricted name. Refer ${restrictedFile} for more info.`)
   }
