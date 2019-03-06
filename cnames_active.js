@@ -63,6 +63,7 @@ var cnames_active = {
   ,"acegroup": "mohamed0group.github.io/acegroup"
   ,"acho": "achojs.github.io/acho"
   ,"acme": "makepost.github.io/acme-commander"
+  ,"7anshui": "7anshuai.github.io" // noCF? (don't add this in a new PR)
   ,"action-u": "kevinast.github.io/action-u"
   ,"active-resource": "nicklandgrebe.github.io/activeresource.js"
   ,"ada": "ada-js.netlify.com"
