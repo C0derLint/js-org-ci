@@ -464,7 +464,7 @@ var cnames_active = {
   ,"faux": "fauxOS.github.io"
   ,"fcbosque": "cronopio.github.io/fcbosque" // noCF? (don't add this in a new PR)
   ,"fe": "xcss.github.io/FE"
-  ,"fea": "google.com"
+  ,"xfea": "google.com"
   ,"feature-u": "kevinast.github.io/feature-u"
   ,"feeble": "feeblejs.github.io/feeble"
   ,"fela": "rofrischmann.github.io/fela" // noCF? (don't add this in a new PR)
