@@ -1,4 +1,4 @@
-import {message, danger, fail, markdown} from "danger"
+import {danger, fail, markdown, message, warn} from "danger"
 
 const {get} = require("https");
 const getAsync = url => new Promise(resolve => get(url, resolve));
@@ -18,7 +18,18 @@ function getJSON(line) {
   } catch (e) {}
 }
 
-// test wheather a redirect is in place and the target is correct
+function checkEntireJSFile() {
+  try {
+    require(`./${activeFile}`)
+    message(`:heavy_check_mark: \`${activeFile}\` parsed successfully.`)
+    return true;
+  } catch(e) {
+    fail(`\`${activeFile}\` could not be parsed due to a syntax error.`)
+    return false;
+  }
+}
+
+// test whether a redirect is in place and the target is correct
 async function checkCNAME(domain, target) {
   const {
     headers,
@@ -70,15 +81,6 @@ const result = async () => {
     fail(`\`${activeFile}\` not modified.`);
 
 
-  // Get diff
-  let diff = await danger.git.diffForFile(activeFile);
-
-  // If no lines have been added, return
-  if(!diff.added) {
-    warn("No lines have been added.");
-    return;
-  }
-
   // Check if PR title matches *.js.org
   let prTitleMatch = /^([\d\w]+?)\.js\.org$/.exec(prTitle);
 
@@ -88,14 +90,24 @@ const result = async () => {
     warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`);
 
   
+  // Get diff
+  let diff = await danger.git.diffForFile(activeFile);
   // Check number of lines changed in diff
   let linesOfCode = await danger.git.linesOfCode();
 
-  if(linesOfCode == 1)
-    message(`:heavy_check_mark: Only one line added!`);
-  else
+  if(linesOfCode == 1) {
+    // Check if lines have been added
+    if(!diff.added) {
+      // Check if file is still valid
+      if(checkEntireJSFile())
+        message(":heavy_check_mark: One record removed.")
+      return;
+    } else {
+      message(`:heavy_check_mark: Only one line added!`);
+    }
+  } else {
     fail(`More than one line added!`);
-
+  }
 
   // Get added line from diff
   let lineAdded = diff.added.substr(1);
@@ -145,7 +157,7 @@ const result = async () => {
       let diffLines = chunk.changes.map(lineObj => { // Iterate through each line
         let lineMatch = /"(.+?)"\s*?:/.exec(lineObj.content); // get subdomain part
         if(lineMatch) return lineMatch[1]; // and return if found
-      }).filter( Boolean ); // Remove false values like undefined, null
+      }).filter( Boolean ); // Remove falsy values like undefined, null
 
       diffLines.some((line, i) => {
         if (i) { // skip the first element
@@ -162,7 +174,7 @@ const result = async () => {
 
     // Check if using a restricted CName
     if(getRestrictedCNames().includes(recordKey))
-      fail(`You are using a restricted name. Refer ${restrictedFile} for more info.`)
+      fail(`You are using a restricted name. Refer \`${restrictedFile}\` for more info.`)
   }
   markdown(`@${danger.github.pr.user.login} Hey, thanks for opening this PR! \
             <br>I've taken the liberty of running a few tests, you can see the results above :)`);
