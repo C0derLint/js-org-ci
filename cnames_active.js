@@ -464,6 +464,7 @@ var cnames_active = {
   ,"faux": "fauxOS.github.io"
   ,"fcbosque": "cronopio.github.io/fcbosque" // noCF? (don't add this in a new PR)
   ,"fe": "xcss.github.io/FE"
+  ,"fea": "google.com"
   ,"feature-u": "kevinast.github.io/feature-u"
   ,"feeble": "feeblejs.github.io/feeble"
   ,"fela": "rofrischmann.github.io/fela" // noCF? (don't add this in a new PR)
@@ -1512,7 +1513,6 @@ var cnames_active = {
   ,"wordywordy": "sverweij.github.io/wordywordy"
   ,"writebar": "alexander-shvets.github.io/writebar"
   ,"wthunting": "sawyerbx.github.io/wthunting"
-  ,"www": "google.com"
   ,"wyfe": "wangyuanstudio.github.io/WYFE" // noCF? (don't add this in a new PR)
   ,"wynncraft": "frawolf.github.io/wynncraft.js"
   ,"xn--w4h": "zzyzxlab.github.io/tao.js"
