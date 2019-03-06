@@ -38,7 +38,6 @@
  *              BECAUSE OF THE RISK OF ABUSE, I'M NOT ACCEPTING REQUESTS FOR PAGES WITHOUT REASONABLE CONTENT!
  */
 
-var cnames_active = {
   "": "js-org.github.io"
   ,"100dayz": "deadcoder0904.github.io/100dayz"
   ,"101": "7anshuai.github.io/js101" // noCF? (don't add this in a new PR)
@@ -1512,7 +1511,6 @@ var cnames_active = {
   ,"wordywordy": "sverweij.github.io/wordywordy"
   ,"writebar": "alexander-shvets.github.io/writebar"
   ,"wthunting": "sawyerbx.github.io/wthunting"
-  ,"www": "7anshuai.github.io"
   ,"wyfe": "wangyuanstudio.github.io/WYFE" // noCF? (don't add this in a new PR)
   ,"wynncraft": "frawolf.github.io/wynncraft.js"
   ,"xn--w4h": "zzyzxlab.github.io/tao.js"
