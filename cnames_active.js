@@ -61,7 +61,6 @@ var cnames_active = {
   ,"accordion": "awps.github.io/Accordion.JS"
   ,"acebooks": "mohamed0group.github.io/acebooks"
   ,"acegroup": "mohamed0group.github.io/acegroup"
-  ,"7anshuai": "7anshuai.github.io"
   ,"acho": "achojs.github.io/acho"
   ,"acme": "makepost.github.io/acme-commander"
   ,"action-u": "kevinast.github.io/action-u"
@@ -84,7 +83,6 @@ var cnames_active = {
   ,"aligos": "aligos.github.io" // noCF? (don't add this in a new PR)
   ,"all": "learnsomuch.github.io/all.js" // noCF? (don't add this in a new PR)
   ,"almin": "almin.github.io"
-  ,"gh": "gert.g.io"
   ,"alt": "goatslacker.github.io/alt" // noCF? (don't add this in a new PR)
   ,"alveron": "rofrischmann.github.io/alveron"
   ,"alys": "rmjordas.github.io/alys"
@@ -112,6 +110,7 @@ var cnames_active = {
   ,"apprun": "yysun.github.io/apprun"
   ,"apr": "ramitos.github.io/apr"
   ,"arc": "diegohaz.github.io/arc"
+  ,"arca": "diex.neuf.io" ,"arcb": "dizx.gh"
   ,"arda": "ardasoyturk.github.io"
   ,"argo": "albertosantini.github.io/argo" // noCF? (don't add this in a new PR)
   ,"arief": "1997arief.github.io"
