@@ -47,7 +47,6 @@ var cnames_active = {
   ,"1c": "oknosoft.github.io/1c"
   ,"21cm": "21cm.github.io"
   ,"23chemistrycamp": "nchuchemistry.github.io/23chemistrycamp"
-  ,"2tube": "you2php.github.io/you2php"
   ,"404": "licshee.github.io/404"
   ,"76": "hustcc.github.io/76"
   ,"766": "766.github.io"
