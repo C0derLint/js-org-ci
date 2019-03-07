@@ -8,13 +8,15 @@ jobs:
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
-            - danger7.0.14
+            - danger
       - run:
           name: Install Dependencies
           command: yarn add danger@7.0.14
       - save_cache:
           name: Save Yarn Package Cache
-          key: danger7.0.14
+          key: danger
           paths:
             - ~/.cache/yarn
-      - run: yarn danger ci
+      - run: 
+          name: Run Danger
+          command: yarn danger ci
