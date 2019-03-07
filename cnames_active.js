@@ -38,7 +38,6 @@
  *              BECAUSE OF THE RISK OF ABUSE, I'M NOT ACCEPTING REQUESTS FOR PAGES WITHOUT REASONABLE CONTENT!
  */
 
-var cnames_active = {
   "": "js-org.github.io"
   ,"100dayz": "deadcoder0904.github.io/100dayz"
   ,"101": "7anshuai.github.io/js101" // noCF? (don't add this in a new PR)
