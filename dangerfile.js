@@ -77,10 +77,18 @@ const result = async () => {
     if(modified.length == 1)
       message(`:heavy_check_mark: Only file modified is \`${activeFile}\``);
     else
-      warn(`Multiple files modified — ${modified.join(", ")}`);
-  else
+      warn(`Multiple files modified — ${modified.join(", ")}`);  
+  else {
     fail(`\`${activeFile}\` not modified.`);
+    return;
+  }
 
+  // Check if cnames_active.js is still valid
+  let isActiveFileValid = checkEntireJSFile();
+
+  // Show a friendly message to PR opener
+  markdown(`@${danger.github.pr.user.login} Hey, thanks for opening this PR! \
+            <br>I've taken the liberty of running a few tests, you can see the results above :)`);
 
   // Check if PR title matches *.js.org
   let prTitleMatch = /^([\d\w]+?)\.js\.org$/.exec(prTitle);
@@ -93,22 +101,26 @@ const result = async () => {
   
   // Get diff
   let diff = await danger.git.diffForFile(activeFile);
+  let diffChunk = await danger.git.structuredDiffForFile(activeFile);
+  let firstChunk = diffChunk && diffChunk.chunks[0];
+
   // Check number of lines changed in diff
   let linesOfCode = await danger.git.linesOfCode();
 
-  if(linesOfCode == 1) {
-    // Check if lines have been added
-    if(!diff.added) {
-      // Check if file is still valid
-      if(checkEntireJSFile())
+  if(linesOfCode == 1)
+    if(!diff.added) { // if no lines have been added, it means there is a removal
+      if(isActiveFileValid) // Check if file is still valid.
         message(":heavy_check_mark: One record removed.")
       return;
-    } else {
+    } else
       message(`:heavy_check_mark: Only one line added!`);
-    }
-  } else {
-    fail(`More than one line added!`);
-  }
+  else if(linesOfCode == 2 && // Check if a single line in the file is modified
+          firstChunk.oldStart == firstChunk.newStart &&
+          firstChunk.oldLines == firstChunk.newLines)
+    message(":heavy_check_mark: A record has been modified.")
+  else
+    fail(`Multiple lines are modified.`);
+  
 
   // Get added line from diff
   let lineAdded = diff.added.substr(1);
@@ -153,7 +165,6 @@ const result = async () => {
     }
 
     // Check if in alphabetic order
-    let diffChunk = await danger.git.structuredDiffForFile(activeFile);
     diffChunk.chunks.map(chunk => { // Iterate through each chunk of differences
       let diffLines = chunk.changes.map(lineObj => { // Iterate through each line
         let lineMatch = /"(.+?)"\s*?:/.exec(lineObj.content); // get subdomain part
@@ -177,8 +188,6 @@ const result = async () => {
     if(getRestrictedCNames().includes(recordKey))
       fail(`You are using a restricted name. Refer \`${restrictedFile}\` for more info.`)
   }
-  markdown(`@${danger.github.pr.user.login} Hey, thanks for opening this PR! \
-            <br>I've taken the liberty of running a few tests, you can see the results above :)`);
 }
 
 // Exit in case of any error
