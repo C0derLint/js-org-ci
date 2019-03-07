@@ -1,15 +1,13 @@
-import {danger, fail, markdown, message, warn} from "danger"
+import {danger, fail, markdown, message, warn} from "danger";
+const { api, pr, thisPR } = danger.github;
 
-const {get} = require("https");
+const { get } = require("https");
 const getAsync = url => new Promise(resolve => get(url, resolve));
 
 const activeFile = "cnames_active.js";
 const restrictedFile = "cnames_restricted.js"
 
-const github = danger.github;
-
 const modified = danger.git.modified_files;
-const prTitle = github.pr.title;
 
 let labels = []
 
@@ -94,14 +92,14 @@ const result = async () => {
   let isActiveFileValid = checkEntireJSFile();
 
   // Show a friendly message to PR opener
-  markdown(`@${github.pr.user.login} Hey, thanks for opening this PR! \
+  markdown(`@${pr.user.login} Hey, thanks for opening this PR! \
             <br>I've taken the liberty of running a few tests, you can see the results above :)`);
 
   // Check if PR title matches *.js.org
-  let prTitleMatch = /^([\d\w]+?)\.js\.org$/.exec(prTitle);
+  let prTitleMatch = /^([\d\w]+?)\.js\.org$/.exec(pr.title);
 
   if(prTitleMatch)
-    message(`:heavy_check_mark: Title of PR — \`${prTitle}\``);
+    message(`:heavy_check_mark: Title of PR — \`${pr.title}\``);
   else
     warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`);
 
@@ -203,7 +201,7 @@ const result = async () => {
 
   // Add the required labels
   if(labels.length)
-    await github.api.issues.addLabels({ ...github.thisPR, labels: labels });
+    await api.issues.replaceLabels({ ...thisPR, labels: labels });
 }
 
 // Exit in case of any error
