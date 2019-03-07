@@ -18,6 +18,7 @@ function getJSON(line) {
   } catch (e) {}
 }
 
+// Try parsing the entire cnames_active.js file to see if there are errors
 function checkEntireJSFile() {
   try {
     require(`./${activeFile}`)
@@ -55,12 +56,12 @@ async function checkCNAME(domain, target) {
 function getRestrictedCNames() {
   let restrictedCNames = []
 
-  require(`./${restrictedFile}`).forEach(CName => {
-    let end = /\(([\d\w/]*?)\)/.exec(CName)
-    let base =  end ? CName.substr(0, end.index) : CName
-    let CNames = new Set([base])
-    if(end) end[1].split("/").forEach(addon =>  CNames.add(base + addon))
-    restrictedCNames.push(...CNames);
+  require(`./${restrictedFile}`).forEach(CName => { // For each item
+    let end = /\(([\d\w/]*?)\)/.exec(CName) // Check if there is anything in bracket
+    let base =  end ? CName.substr(0, end.index) : CName // If yes, set base as letters before bracket
+    let CNames = new Set([base]) // Using sets to prevent duplicates | if no, set base as whole word itself
+    if(end) end[1].split("/").forEach(addon =>  CNames.add(base + addon)) // Split stuff in bracket, base + extension
+    restrictedCNames.push(...CNames); // Push into array
   });
 
   return restrictedCNames;
