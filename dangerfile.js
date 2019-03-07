@@ -45,8 +45,10 @@ async function checkCNAME(domain, target) {
   if(statusCode == 404) {
     fail(`\`${target}\` responds with a 404 error`);
     labels.push("404");
-  } else if(!(statusCode >= 300 && statusCode < 400))
+  } else if(!(statusCode >= 300 && statusCode < 400)) {
     warn(`\`${target}\` has to redirect using a CNAME file`);
+    labels.push("awaiting CNAME");
+  }
   
   // Check if the target redirect is correct
   const targetLocation = String(headers.location).replace(/^https/, "http").replace(/\/$/,'');
@@ -188,6 +190,7 @@ const result = async () => {
             return true;
           } else if(compareStrings == 0) { // check if duplicate
             fail(`\`${line}.js.org\` already exists.`);
+            labels.push("name conflict");
           }
         }
       })
