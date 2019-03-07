@@ -6,8 +6,12 @@ const getAsync = url => new Promise(resolve => get(url, resolve));
 const activeFile = "cnames_active.js";
 const restrictedFile = "cnames_restricted.js"
 
+const github = danger.github;
+
 const modified = danger.git.modified_files;
-const prTitle = danger.github.pr.title;
+const prTitle = github.pr.title;
+
+let labels = []
 
 // puts the line into a JSON object, tries to parse and returns a JS object or undefined
 function getJSON(line) {
@@ -38,9 +42,10 @@ async function checkCNAME(domain, target) {
   } = await getAsync(target);
 
   // Check status codes to see if redirect is done properly
-  if(statusCode == 404)
+  if(statusCode == 404) {
     fail(`\`${target}\` responds with a 404 error`);
-  else if(!(statusCode >= 300 && statusCode < 400))
+    labels.push("404");
+  } else if(!(statusCode >= 300 && statusCode < 400))
     warn(`\`${target}\` has to redirect using a CNAME file`);
   
   // Check if the target redirect is correct
@@ -69,7 +74,7 @@ function getRestrictedCNames() {
 
 
 const result = async () => {
-  
+
   // Check if cnames_active.js is modified.
   let isCNamesFileModified = modified.includes(activeFile);
 
@@ -87,7 +92,7 @@ const result = async () => {
   let isActiveFileValid = checkEntireJSFile();
 
   // Show a friendly message to PR opener
-  markdown(`@${danger.github.pr.user.login} Hey, thanks for opening this PR! \
+  markdown(`@${github.pr.user.login} Hey, thanks for opening this PR! \
             <br>I've taken the liberty of running a few tests, you can see the results above :)`);
 
   // Check if PR title matches *.js.org
@@ -107,18 +112,21 @@ const result = async () => {
   // Check number of lines changed in diff
   let linesOfCode = await danger.git.linesOfCode();
 
-  if(linesOfCode == 1)
+  if(linesOfCode == 1) {
+    labels.push("add");
     if(!diff.added) { // if no lines have been added, it means there is a removal
+      labels.push("remove");
       if(isActiveFileValid) // Check if file is still valid.
         message(":heavy_check_mark: One record removed.")
       return;
     } else
       message(`:heavy_check_mark: Only one line added!`);
-  else if(linesOfCode == 2 && // Check if a single line in the file is modified
+  } else if(linesOfCode == 2 && // Check if a single line in the file is modified
           firstChunk.oldStart == firstChunk.newStart &&
-          firstChunk.oldLines == firstChunk.newLines)
-    message(":heavy_check_mark: A record has been modified.")
-  else
+          firstChunk.oldLines == firstChunk.newLines) {
+    message(":heavy_check_mark: A record has been modified.");
+    labels.push("change");
+  } else
     fail(`Multiple lines are modified.`);
   
 
@@ -162,7 +170,8 @@ const result = async () => {
     if (recordValue.match(/.github\.io/g)) {
       // check the presence of a CNAME
       await checkCNAME(`http://${recordKey}.js.org`, `https://${recordValue}`);
-    }
+    } else
+      labels.push("external page");
 
     // Check if in alphabetic order
     diffChunk.chunks.map(chunk => { // Iterate through each chunk of differences
@@ -188,6 +197,10 @@ const result = async () => {
     if(getRestrictedCNames().includes(recordKey))
       fail(`You are using a restricted name. Refer \`${restrictedFile}\` for more info.`)
   }
+
+  // Add the required labels
+  if(labels.length)
+    await github.api.issues.addLabels({ ...github.thisPR, labels: labels });
 }
 
 // Exit in case of any error
