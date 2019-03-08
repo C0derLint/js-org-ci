@@ -537,6 +537,7 @@ var cnames_active = {
   ,"gol": "goljs.github.io/GoL"
   ,"gondel": "namics.github.io/gondel"
   ,"gotanda": "gotandajs.github.io"
+  ,"lada": "ada-js.netlify.com"
   ,"gottasurf": "jottocraft.github.io/surf"
   ,"gramps": "gramps-graphql.github.io/gramps"
   ,"graphics2d": "keyten.github.io/Graphics2D" // noCF? (don't add this in a new PR)
