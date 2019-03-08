@@ -35,7 +35,7 @@ function checkEntireJSFile() {
     // Check if multiple records point to same web site
     let recordValues = Object.values(allRecords); // all object values in array
     let recordValuesSet = new Set(recordValues); // cast to set - sets don't allow duplicates
-    if(recordValuesSet.size == recordValues.length) // Compare lengths
+    if(recordValuesSet.size != recordValues.length) // Compare lengths
       warn("An existing subdomain already points to this site.");
 
     return true;
