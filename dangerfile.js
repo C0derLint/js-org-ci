@@ -218,7 +218,7 @@ const result = async () => {
 
   // Add Review
   if(results.fails.length + results.warnings.length > 0)
-    await api.pulls.createReview({ ...thisPR, event: "REQUEST_CHANGES" });
+    await api.pulls.createReview({ ...thisPR, body: "Some problems, check the test results.",event: "REQUEST_CHANGES" });
   else
     await api.pulls.createReview({ ...thisPR, event: "APPROVE"});
 }
