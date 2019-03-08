@@ -23,11 +23,19 @@ function getJSON(line) {
 // Try parsing the entire cnames_active.js file to see if there are errors
 function checkEntireJSFile() {
   try {
-    require(`./${activeFile}`)
+    let allRecords = require(`./${activeFile}`)
     message(`:heavy_check_mark: \`${activeFile}\` parsed successfully.`)
+
+    // Check if multiple records point to same web site
+    let recordValues = Object.values(allRecords); // all object values in array
+    let recordValuesSet = new Set(recordValues); // cast to set - sets don't allow duplicates
+    if(recordValuesSet.size == recordValues.length) // Compare lengths
+      warn("An existing subdomain already points to this site.");
+
     return true;
   } catch(e) {
     fail(`\`${activeFile}\` could not be parsed due to a syntax error.`)
+    labels.push("invalid");
     return false;
   }
 }
