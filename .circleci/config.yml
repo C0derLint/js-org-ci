@@ -19,4 +19,4 @@ jobs:
             - ~/.cache/yarn
       - run: 
           name: Run Danger
-          command: yarn danger ci
+          command: yarn danger ci -v

@@ -1,4 +1,10 @@
-import {danger, fail, markdown, message, warn} from "danger";
+/**
+ * 
+ * Trying to read this code? Start from the result() function on line 90.
+ * 
+ */
+
+import { danger, fail, markdown, message, warn, results } from "danger";
 const { api, pr, thisPR } = danger.github;
 
 const { get } = require("https");
@@ -208,8 +214,13 @@ const result = async () => {
   }
 
   // Add the required labels
-  if(labels.length)
-    await api.issues.replaceLabels({ ...thisPR, labels: labels });
+  await api.issues.replaceLabels({ ...thisPR, labels: labels });
+
+  // Add Review
+  if(results.fails.length + results.warnings.length > 0)
+    await api.pulls.createReview({ ...thisPR, event: "REQUEST_CHANGES" });
+  else
+    await api.pulls.createReview({ ...thisPR, event: "APPROVE"});
 }
 
 // Exit in case of any error
