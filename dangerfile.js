@@ -17,6 +17,43 @@ const modified = danger.git.modified_files;
 
 let labels = []
 
+let tests = {
+  record: {
+    state: true,
+    desc: `Only one line has added.`
+  },
+  activeFileModified: {
+    desc: `\`${activeFile}\` has been modified.`
+  },
+  onlyOneFileModified: {
+    desc: `Only one file has been modified.`
+  },
+  validJSFile: {
+    desc: `\`${activeFile}\` parsed successfully.`
+  },
+  alphabeticalOrder: { 
+    state: true,
+    desc: `\`${activeFile}\` is in alphabetical order.`
+  },
+  noDuplicateKey: {
+    state: true,
+    desc: `No duplicate keys found.`
+  },
+  noDuplicateValue: {},
+  prTitleCorrect: {
+    state: false,
+    desc: `Pull Request title is in the format *myjsproject.js.org*`
+  },
+  validComment: {
+
+  },
+  exactRegex: {},
+  notRestrictedKey: {},
+  siteExists: {},
+  CNAMEplaced: {},
+  correctRedirect: {}
+}
+
 // puts the line into a JSON object, tries to parse and returns a JS object or undefined
 function getJSON(line) {
   try {
@@ -30,17 +67,28 @@ function getJSON(line) {
 function checkEntireJSFile() {
   try {
     let allRecords = require(`./${activeFile}`)
-    message(`:heavy_check_mark: \`${activeFile}\` parsed successfully.`)
+
+    let recordKeys = Object.keys(allRecords);
+    let recordValues = Object.values(allRecords);
+    
+    // Check if in alphabetical order
+    for(let i = 1; i < recordKeys.length; i++) {
+      let compareStrings = recordKeys[i].localeCompare(recordKeys[i - 1]); // Compare strings
+      if(compareStrings < 0) { 
+        tests.alphabeticalOrder.state = false;
+        break;
+      } // test for duplicates
+      else if(compareStrings == 0)
+        tests.noDuplicateKey.state = false;
+    }
 
     // Check if multiple records point to same web site
-    let recordValues = Object.values(allRecords); // all object values in array
     let recordValuesSet = new Set(recordValues); // cast to set - sets don't allow duplicates
     if(recordValuesSet.size != recordValues.length) // Compare lengths
       warn("An existing subdomain already points to this site.");
 
     return true;
   } catch(e) {
-    fail(`\`${activeFile}\` could not be parsed due to a syntax error.`)
     labels.push("invalid");
     return false;
   }
@@ -90,38 +138,29 @@ function getRestrictedCNames() {
 const result = async () => {
 
   // Check if cnames_active.js is modified.
-  let isCNamesFileModified = modified.includes(activeFile);
-
-  if(isCNamesFileModified)
-    if(modified.length == 1)
-      message(`:heavy_check_mark: Only file modified is \`${activeFile}\``);
-    else
-      warn(`Multiple files modified — ${modified.join(", ")}`);  
-  else {
-    fail(`\`${activeFile}\` not modified.`);
-    return;
-  }
+  tests.activeFileModified.state = modified.includes(activeFile);
+  tests.onlyOneFileModified.state = modified.length == 1;
 
   // Check if cnames_active.js is still valid
-  let isActiveFileValid = checkEntireJSFile();
+  tests.validJSFile.state = checkEntireJSFile();
 
   // Show a friendly message to PR opener
-  markdown(`@${pr.user.login} Hey, thanks for opening this PR! \
-            <br>I've taken the liberty of running a few tests, you can see the results above :)`);
+  //markdown(`@${pr.user.login} Hey, thanks for opening this PR! \
+  //          <br>I've taken the liberty of running a few tests, you can see the results above :)`);
 
   // Check if PR title matches *.js.org
   let prTitleMatch = /^([\d\w]+?)\.js\.org$/.exec(pr.title);
 
   if(prTitleMatch)
-    message(`:heavy_check_mark: Title of PR — \`${pr.title}\``);
-  else
-    warn(`Title of Pull Request is not in the format *myawesomeproject.js.org*`);
-
-  
+    tests.prTitleCorrect.state = true;
+   
   // Get diff
-  let diff = await danger.git.diffForFile(activeFile);
-  let diffChunk = await danger.git.structuredDiffForFile(activeFile);
-  let firstChunk = diffChunk && diffChunk.chunks[0];
+  let diff = await danger.git.diffForFile(activeFile);\
+  tests.record.added = !!diff.added
+  tests.record.removed = !!diff.removed
+
+  let {chunks} = await danger.git.structuredDiffForFile(activeFile);
+  let firstChunk = chunks && chunks[0];
 
   // Check number of lines changed in diff
   let linesOfCode = await danger.git.linesOfCode();
@@ -130,7 +169,7 @@ const result = async () => {
     labels.push("add");
     if(!diff.added) { // if no lines have been added, it means there is a removal
       labels.push("remove");
-      if(isActiveFileValid) // Check if file is still valid.
+      if(tests.validJSFile.state) // Check if file is still valid.
         message(":heavy_check_mark: One record removed.")
       return;
     } else
@@ -187,26 +226,6 @@ const result = async () => {
     } else
       labels.push("external page");
 
-    // Check if in alphabetic order
-    diffChunk.chunks.map(chunk => { // Iterate through each chunk of differences
-      let diffLines = chunk.changes.map(lineObj => { // Iterate through each line
-        let lineMatch = /"(.+?)"\s*?:/.exec(lineObj.content); // get subdomain part
-        if(lineMatch) return lineMatch[1]; // and return if found
-      }).filter( Boolean ); // Remove falsy values like undefined, null
-
-      diffLines.some((line, i) => {
-        if (i) { // skip the first element
-          let compareStrings = line.localeCompare(diffLines[i - 1]); // Compare strings
-          if(compareStrings < 0) { // Check if it is in alphabetical order
-            fail("The list is no longer in alphabetic order.");
-            return true;
-          } else if(compareStrings == 0) { // check if duplicate
-            fail(`\`${line}.js.org\` already exists.`);
-            labels.push("name conflict");
-          }
-        }
-      })
-    }); 
 
     // Check if using a restricted CName
     if(getRestrictedCNames().includes(recordKey))
