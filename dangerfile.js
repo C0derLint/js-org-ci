@@ -247,3 +247,13 @@ result().catch(err => {
   console.info(`ERROR: ${err.message || err}`);
   console.info("Some CI tests have returned an error.");
 });
+
+function replyBasedOnTests() {
+  if(tests.activeFileModified == true) {
+    if(tests.onlyOneFileModified == true) {
+      console.log("Heya! I")
+    }
+  } else {
+    console.log("I'm not sure what to make of this .. @MattIPv4 @indus")
+  } 
+}
