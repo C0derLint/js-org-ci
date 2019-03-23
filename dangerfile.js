@@ -213,13 +213,20 @@ const result = async () => {
       fail(`You are using a restricted name. Refer \`${restrictedFile}\` for more info.`)
   }
 
+  
+
   // Add the required labels
   await api.issues.replaceLabels({ ...thisPR, labels: labels });
 
+  let {fails, warnings} = results;
+  let issues = fails.concat(warnings)
+  
+
   // Add Review
-  if(results.fails.length + results.warnings.length > 0)
-    await api.pulls.createReview({ ...thisPR, body: "Some problems, check the test results.",event: "REQUEST_CHANGES" });
-  else
+  if(results.issues.length > 0) {
+    issues.map(issue => { return `<li>${issue}</li>` });
+    await api.pulls.createReview({ ...thisPR, body: `<ul>${issues.join("")}</ul>`,event: "REQUEST_CHANGES" });
+  } else
     await api.pulls.createReview({ ...thisPR, event: "APPROVE"});
 }
 
