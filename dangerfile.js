@@ -224,7 +224,7 @@ const result = async () => {
 
   // Add Review
   if(issues.length) {
-    issues.map(issue => { return `<li>${issue}</li>` });
+    issues = issues.map(issue => { return `<li>${issue.message}</li>` });
     await api.pulls.createReview({ ...thisPR, body: `<ul>${issues.join("")}</ul>`,event: "REQUEST_CHANGES" });
   } else
     await api.pulls.createReview({ ...thisPR, event: "APPROVE"});
