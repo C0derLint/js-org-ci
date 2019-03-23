@@ -74,6 +74,7 @@ var cnames_active = {
   ,"ahmad": "aruzikulov.github.io/ahmad"
   ,"ajaxable": "artf.github.io/ajaxable"
   ,"ajv": "epoberezkin.github.io/ajv"
+  ,"jk": "jkv"
   ,"akase": "cedmax.github.io/akase" // noCF? (don't add this in a new PR)
   ,"akatsuki": "akatsukijs.github.io/akatsuki"
   ,"akshaybhalotia": "akshaybhalotia.github.io"
